@@ -69,20 +69,11 @@ objective: because every future random result is observed before the next
 decision, the dynamic program yields the true optimal action at every
 reachable state, not an approximation.
 
-## Test
-
 Test results:
 
 - `solver_check`: `V(empty) = 3.227864`; best opening is the center; Bellman
   consistency held on 500 sampled states with worst error `0`; 20,000-game
   Monte Carlo returned `3.2236` bingos/game, consistent with the exact value.
-- Independent Python brute-force evaluation of two arbitrary mid-game states
-  (12 marks with 2 rounds left, and 14 marks with 1 round left) matched the Jai
-  solver's value and every candidate action exactly. The reference evaluator is
-  `tools/reference_check.py`; compare it with `tools/reference_dump.exe`.
-- `app_check`: verifies click-phase transitions, rejection of a duplicate
-  random mark, undo for both half and complete rounds, terminal projection,
-  post-undo recommendations, and reset.
 
 ## Credits and licences
 
