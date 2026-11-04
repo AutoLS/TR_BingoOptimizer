@@ -7,7 +7,7 @@
 // optimal next pick after every observed random result.
 //
 // Build from the project root:
-//   E:\Dev\jai\bin\jai.exe build.jai
+//   jai.exe build.jai
 // ============================================================================
 
 #import "Basic";
