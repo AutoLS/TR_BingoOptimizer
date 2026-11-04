@@ -322,7 +322,7 @@ ui_header :: (status_text: string, status_color: Color) {
     // Logo + wordmark.
     ui_logo(24.0, 25.0);
     ui_text(UI_FONT_DISPLAY, "BINGO", 62.0, 13.0, 27.0, 1.4, C_TEXT);
-    ui_text(UI_FONT_DISPLAY, "OPTIMIZER", 136.0, 13.0, 27.0, 1.4, C_GOLD);
+    ui_text(UI_FONT_DISPLAY, "OPTIMIZER - By AutoLS", 136.0, 13.0, 27.0, 1.4, C_GOLD);
     ui_text(UI_FONT_BODY, "Exact expectimax - optimal picks under random marks",
             63.0, 48.0, 12.0, 0.2, C_TEXT_DIM);
 
