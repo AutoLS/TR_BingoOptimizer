@@ -55,7 +55,7 @@ Implementation details:
   scratch half is released once the policy is built.
 - Only even-sized masks are decision states: `sum(C(25,k), k even <= 16) =
   16,241,061` states. The full precomputation takes about **0.63 s** in the
-  optimized build on this machine, once per launch.
+  optimized build on my personal dev machine, once per launch.
 - Ties are frequent because of board symmetry. If two moves differ by less than
   `0.000002` expected bingos, the UI breaks the tie for legibility (immediate
   lines, then 4/5 threats, then lines touched, then distance from center). This
