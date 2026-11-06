@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#04070e">
+  <meta name="description" content="Exact expectimax bingo calculator: choose the optimal square after every random mark.">
+  <title>Bingo Optimizer</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/ChakraPetch.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/OpenSans-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="viewport">
+    <div class="backdrop" aria-hidden="true">
+      <span class="halo halo-one"></span>
+      <span class="halo halo-two"></span>
+      <span class="halo halo-three"></span>
+    </div>
+
+    <div class="stage" id="stage">
+      <header class="topbar">
+        <div class="logo" aria-hidden="true">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+        <div class="brand">
+          <h1><span>BINGO</span><span class="gold">OPTIMIZER</span></h1>
+          <p>Exact expectimax - optimal picks under random marks</p>
+        </div>
+        <div class="pills">
+          <span class="pill">5 x 5</span>
+          <span class="pill">8 ATTEMPTS</span>
+          <span class="pill status building" id="statusPill"><i></i><b id="statusText">BUILDING POLICY</b></span>
+        </div>
+        <div class="hairline"></div>
+      </header>
+
+      <main class="layout">
+        <section class="card board-card" id="boardCard">
+          <div class="board-head">
+            <span class="eyebrow" id="boardEyebrow">CURRENT BOARD</span>
+            <span class="board-count" id="boardCount">0 / 12 BINGOS</span>
+          </div>
+
+          <div class="board-area">
+            <div class="col-labels" id="colLabels" aria-hidden="true"></div>
+            <div class="row-labels" id="rowLabels" aria-hidden="true"></div>
+            <div class="board-grid" id="boardGrid" role="grid" aria-label="Bingo board">
+              <svg class="bingo-lines" id="bingoLines" viewBox="0 0 620 620" aria-hidden="true"></svg>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card analysis" id="analysis">
+          <div class="analysis-head">
+            <span class="eyebrow">LIVE ANALYSIS</span>
+            <span class="exact-dp">EXACT DP</span>
+          </div>
+
+          <section class="metrics" aria-label="Board metrics">
+            <div class="metric-now">
+              <span class="eyebrow">BINGOS NOW</span>
+              <div class="metric-line">
+                <strong class="metric-big" id="bingosNow">0</strong>
+                <span class="metric-sub" id="ofLines">of 12 lines</span>
+              </div>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-expected">
+              <span class="eyebrow">EXPECTED FINAL</span>
+              <strong class="metric-gold" id="projection">--</strong>
+              <span class="metric-sub" id="projectionSub">exact optimal value</span>
+            </div>
+          </section>
+
+          <section class="attempts" aria-label="Attempts">
+            <div class="section-line">
+              <span class="eyebrow">ATTEMPT</span>
+              <span class="attempt-fraction" id="attemptFraction">1 / 8</span>
+            </div>
+            <div class="pips" id="pips" aria-hidden="true"></div>
+            <p class="hint" id="attemptHint">Every round marks one pick plus one random square.</p>
+            <div class="rule"></div>
+          </section>
+
+          <section class="instruction" id="instructionCard" data-phase="player">
+            <span class="step" id="instructionStep">STEP 1 OF 2</span>
+            <h2 id="instructionTitle">Mark your chosen square.</h2>
+            <p id="instructionSub">Click a cell on the board. The best next move is in gold.</p>
+            <div class="instruction-icon" aria-hidden="true">
+              <span class="icon-ring"></span>
+              <span class="icon-diamond"></span>
+              <span class="icon-check"></span>
+            </div>
+          </section>
+
+          <section class="recommendation" id="recommendationCard">
+            <div class="rec-head">
+              <span class="rec-label" id="recLabel">NEXT BEST MOVE</span>
+              <span class="rec-side" id="recSide">EV MAXIMAL</span>
+            </div>
+
+            <div class="rec-player" id="recPlayer">
+              <div class="rec-coord-wrap">
+                <strong class="rec-coord" id="bestCoord">--</strong>
+                <span class="sparkle" id="bestSparkle" aria-hidden="true"></span>
+              </div>
+              <span class="rec-rank" id="recRank">RANK 1 OF 25 LEGAL</span>
+              <div class="rec-vline"></div>
+              <div class="rec-metric">
+                <span class="eyebrow">EXPECTED FINAL</span>
+                <strong class="rec-ev" id="bestEv">--</strong>
+                <span class="rec-edge" id="recEdge">best available move</span>
+              </div>
+              <div class="rec-rule"></div>
+              <p class="rec-insight line1" id="recInsight1"></p>
+              <p class="rec-insight line2 dim" id="recInsight2"></p>
+            </div>
+
+            <div class="rec-await" id="recAwait" hidden>
+              <strong class="await-title">AWAITING</strong>
+              <p class="await-sub">RANDOM MARK</p>
+              <div class="rec-rule await-rule"></div>
+              <p class="rec-insight line1">The exact next recommendation depends on</p>
+              <p class="rec-insight line2 dim">which square the game marks. It appears next.</p>
+            </div>
+
+            <div class="rec-done" id="recDone" hidden>
+              <strong class="done-score" id="finalScore">0</strong>
+              <span class="done-label">BINGOS</span>
+              <div class="rec-rule done-rule"></div>
+              <p class="rec-insight line1">Eight rounds are in the books.</p>
+              <p class="rec-insight line2 dim">Undo to revisit a decision, or reset for a new board.</p>
+            </div>
+          </section>
+
+          <section class="options" aria-label="Top options">
+            <div class="section-line options-head">
+              <span class="eyebrow">TOP OPTIONS</span>
+              <span class="options-note">expected final</span>
+            </div>
+            <div class="options-body" id="optionsBody"></div>
+          </section>
+
+          <section class="pressure" aria-label="Line pressure">
+            <div class="section-line">
+              <span class="eyebrow">LINE PRESSURE</span>
+              <span class="pressure-complete" id="pressureComplete">0 COMPLETE</span>
+            </div>
+            <div class="pressure-segments" id="pressureSegments" aria-hidden="true"></div>
+            <p class="pressure-summary" id="pressureSummary">0 at 4/5&nbsp;&nbsp; 0 at 3/5</p>
+          </section>
+
+          <section class="controls" aria-label="Controls">
+            <button class="control" id="undoButton" type="button">
+              <span>UNDO</span><kbd>Z</kbd>
+            </button>
+            <button class="control" id="resetButton" type="button">
+              <span>RESET</span><kbd>R</kbd>
+            </button>
+            <button class="control active" id="heatButton" type="button" aria-pressed="true">
+              <span>EV LABELS</span><kbd>H</kbd>
+            </button>
+          </section>
+
+          <footer class="legend" aria-label="Legend">
+            <span class="legend-item"><i class="dot cyan"></i>YOUR MARK</span>
+            <span class="legend-item"><i class="dot magenta"></i>RANDOM</span>
+            <span class="legend-item"><i class="sparkle small" aria-hidden="true"></i>BEST NEXT</span>
+            <span class="legend-ev">EV = EXPECTED FINAL</span>
+          </footer>
+        </aside>
+      </main>
+    </div>
+  </div>
+
+  <div class="loader" id="loader" role="status" aria-live="polite">
+    <div class="loader-card">
+      <span class="loader-spinner" aria-hidden="true"></span>
+      <span class="eyebrow gold">ONE-TIME PRECOMPUTATION</span>
+      <h1>SOLVING THE OPTIMAL POLICY</h1>
+      <p class="loader-copy">The calculator is resolving every reachable board and<br>the exact expected value of all eight rounds.</p>
+      <div class="loader-bar"><i id="loaderBar"></i></div>
+      <div class="loader-status">
+        <span id="loaderLabel">Preparing the state space...</span>
+        <b id="loaderPercent">0%</b>
+      </div>
+      <div class="loader-rule"></div>
+      <span class="eyebrow dim">WHY THIS IS FAST</span>
+      <p class="loader-note">16.2 million decision states collapse into one exact table.</p>
+      <p class="loader-note">After this one-time pass, every recommendation is instant.</p>
+      <p class="loader-faint">No sampling. No heuristic scoring. No lookahead guesses.</p>
+    </div>
+  </div>
+
+  <noscript>
+    <div class="noscript">Bingo Optimizer needs JavaScript to build the exact policy table.</div>
+  </noscript>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -10,6 +10,12 @@ NOTE: This app doesn't have a code-signing certificate, so you will see a warnin
 when running the app the first time. Click on `More info`and click `Run anyway`
 to start the application. 
 
+## Web version (static)
+
+Try the web version here: https://autols.github.io/TR_BingoOptimizer/
+
+![Bingo Optimizer on the web](docs/web-preview.png)
+
 ## How to use it
 
 1. **Your pick** - click the square you intend to mark. It is stamped cyan and
